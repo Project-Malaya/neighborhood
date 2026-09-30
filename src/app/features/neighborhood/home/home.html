@@ -1,0 +1,69 @@
+<div class="neighborhood-page">
+  <header class="top-bar">
+    <a class="brand" routerLink="/home" aria-label="Kimi and Sia's Neighborhood home">
+      <span aria-hidden="true">🌷</span>
+      <span>Kimi and Sia's Neighborhood</span>
+    </a>
+    <div class="account">
+      <span class="account-email">{{ email }}</span>
+      <button type="button" class="logout-button" (click)="logout()" [disabled]="loggingOut()">
+        {{ loggingOut() ? 'Leaving…' : 'Log out' }}
+      </button>
+    </div>
+  </header>
+
+  <main class="home-content">
+    <section class="welcome">
+      <span class="sun" aria-hidden="true">☀️</span>
+      <p class="eyebrow">A lovely day to be home</p>
+      <h1>Kimi and Sia's<br />Neighborhood</h1>
+      <p>Your own little corner of the neighborhood.</p>
+    </section>
+
+    <div class="yard">
+      <article class="place-card house-card">
+        <div class="house-art" aria-hidden="true">
+          <span class="chimney"></span>
+          <span class="roof"></span>
+          <span class="house-body">
+            <span class="window window-left"></span>
+            <span class="door"></span>
+            <span class="window window-right"></span>
+          </span>
+          <span class="house-step"></span>
+        </div>
+        <div class="place-caption">
+          <span class="caption-icon" aria-hidden="true">🏡</span>
+          <div>
+            <h2>My House</h2>
+            <p>A cozy place to call your own</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="place-card garden-card">
+        <div class="garden-art" aria-hidden="true">
+          <span class="flower flower-one">🌷</span>
+        </div>
+        <div class="place-caption">
+          <span class="caption-icon" aria-hidden="true">🌼</span>
+          <div>
+            <h2>My Garden</h2>
+            <p>A little patch of sunshine</p>
+          </div>
+        </div>
+        <div class="flower-card">
+          <span class="flower-icon" aria-hidden="true">🌷</span>
+          <div>
+            <h3>My Flower</h3>
+            <p>Growing in your garden</p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    @if (errorMessage()) {
+      <p class="logout-error" role="alert">{{ errorMessage() }}</p>
+    }
+  </main>
+</div>
