@@ -69,10 +69,11 @@ form {
   gap: 0.45rem;
 }
 
-label {
+.field label {
   color: #34483a;
   font-size: 0.9rem;
   font-weight: 650;
+  text-align: left;
 }
 
 input {
@@ -91,18 +92,30 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
-.field-error,
-.form-error {
+.field-hint,
+.field-error {
   margin: 0;
-  color: #9d2929;
   font-size: 0.85rem;
   line-height: 1.4;
+  text-align: left;
+}
+
+.field-hint {
+  color: #58645a;
+}
+
+.field-error {
+  color: #9d2929;
 }
 
 .form-error {
+  margin: 0;
   padding: 0.75rem;
   border-radius: 0.6rem;
   background: #fff0ee;
+  color: #9d2929;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 button {

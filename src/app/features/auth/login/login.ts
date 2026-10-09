@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService, UsernameTakenError } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,8 +17,7 @@ export class Login {
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly form = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]{3,20}$/)]],
   });
 
   protected async submit(): Promise<void> {
@@ -30,11 +29,14 @@ export class Login {
 
     this.loading.set(true);
     try {
-      const { email, password } = this.form.getRawValue();
-      await this.auth.signIn(email, password);
+      await this.auth.createPlayer(this.form.controls.username.value);
       await this.router.navigateByUrl('/home');
-    } catch {
-      this.errorMessage.set('We couldn’t log you in. Check your email and password and try again.');
+    } catch (error) {
+      this.errorMessage.set(
+        error instanceof UsernameTakenError
+          ? 'That username is already taken. Try another one.'
+          : 'We couldn’t create your player. Check that anonymous sign-ins are enabled and the profile migration has been applied.',
+      );
     } finally {
       this.loading.set(false);
     }

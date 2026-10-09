@@ -57,3 +57,12 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the `providedIn: 'root'` option for singleton services
 - Prefer the `@Service` decorator over `@Injectable({providedIn: 'root'})` for new singleton services (Angular v22+)
 - Use the `inject()` function instead of constructor injection
+
+## Authentication and Supabase
+
+- Use Supabase anonymous sign-in for the beginner playground's username-only identity. Usernames are display identifiers, not credentials.
+- Never collect/store passwords in the app's profile table or invent fake email/phone identities. Supabase Auth owns the anonymous browser session.
+- The existing Supabase publishable key is browser-safe; never expose a service-role credential.
+- Profiles link to `auth.users.id` through `user_id`; RLS must scope reads/inserts to `auth.uid()` and anonymous sessions.
+- Put schema changes in reviewed `supabase/migrations/` files. Never apply remote migrations without explicit user approval.
+- Keep authorization and future game-critical state server/database enforced with RLS or server-side operations.

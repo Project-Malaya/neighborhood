@@ -17,8 +17,6 @@ describe('Home routing', () => {
           useValue: {
             user: signal(null),
             hasSession: vi.fn().mockResolvedValue(false),
-            signIn: vi.fn(),
-            signOut: vi.fn(),
           },
         },
       ],
@@ -37,9 +35,8 @@ describe('Home routing', () => {
         {
           provide: AuthService,
           useValue: {
-            user: signal({ email: 'kimi@example.com' }),
+            user: signal({ username: 'kimi' }),
             hasSession: vi.fn().mockResolvedValue(true),
-            signOut: vi.fn(),
           },
         },
       ],
@@ -58,9 +55,8 @@ describe('Home routing', () => {
         {
           provide: AuthService,
           useValue: {
-            user: signal({ email: 'kimi@example.com' }),
+            user: signal({ username: 'kimi' }),
             hasSession: vi.fn().mockResolvedValue(true),
-            signOut: vi.fn(),
           },
         },
       ],
@@ -71,7 +67,8 @@ describe('Home routing', () => {
     const element = harness.routeNativeElement as HTMLElement;
 
     expect(page).toBeInstanceOf(Home);
-    expect(element.textContent).toContain('kimi@example.com');
+    expect(element.textContent).toContain('Hello, kimi!');
+    expect(element.textContent).toContain('@kimi');
     expect(element.textContent).toContain('My House');
     expect(element.textContent).toContain('My Flower');
   });

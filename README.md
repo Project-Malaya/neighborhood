@@ -2,6 +2,28 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
 
+## Simple player login
+
+The login screen asks for a username and creates a Supabase anonymous session. Supabase keeps that
+session in this browser, so returning to the same browser restores the player's profile without
+asking for a password. Passwords are not collected or stored.
+
+Before using login:
+
+1. Enable **Anonymous Sign-Ins** in the Supabase project's Auth provider settings.
+2. Review `supabase/migrations/20261009120109_add_anonymous_profile_ownership.sql` against your
+   existing database. It assumes the `public.profiles` table has the columns from the SQL you
+   supplied (`id`, `username`, `display_name`, and `created_at`). The migration adds a Supabase
+   Auth user ID, enforces the username format, removes public `anon` access, and limits profile
+   reads/inserts to the owning anonymous session.
+3. Link the Supabase CLI to the project and apply the reviewed migration with `supabase db push`.
+   No remote migration has been applied by this project setup.
+
+This is a playground identity, not a recoverable account. Signing out, clearing browser storage,
+or switching devices loses access to that player; usernames do not prove ownership. Do not use
+this for sensitive data or treat a username as a password. The `profiles` table has no password
+column. Supabase Auth owns the browser session and PostgreSQL RLS enforces profile ownership.
+
 ## Development server
 
 To start a local development server, run:
@@ -42,6 +64,15 @@ To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use th
 
 ```bash
 ng test
+```
+
+## Linting and formatting
+
+Run ESLint and Prettier with:
+
+```bash
+npm run lint
+npm run format:check
 ```
 
 ## Running end-to-end tests

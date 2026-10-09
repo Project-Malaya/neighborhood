@@ -5,10 +5,7 @@
       <span>Kimi and Sia's Neighborhood</span>
     </a>
     <div class="account">
-      <span class="account-email">{{ email }}</span>
-      <button type="button" class="logout-button" (click)="logout()" [disabled]="loggingOut()">
-        {{ loggingOut() ? 'Leaving…' : 'Log out' }}
-      </button>
+      <span class="account-username">&#64;{{ username() }}</span>
     </div>
   </header>
 
@@ -17,7 +14,7 @@
       <span class="sun" aria-hidden="true">☀️</span>
       <p class="eyebrow">A lovely day to be home</p>
       <h1>Kimi and Sia's<br />Neighborhood</h1>
-      <p>Your own little corner of the neighborhood.</p>
+      <p>Hello, {{ username() }}! Your own little corner of the neighborhood is waiting.</p>
     </section>
 
     <div class="yard">
@@ -61,9 +58,5 @@
         </div>
       </article>
     </div>
-
-    @if (errorMessage()) {
-      <p class="logout-error" role="alert">{{ errorMessage() }}</p>
-    }
   </main>
 </div>

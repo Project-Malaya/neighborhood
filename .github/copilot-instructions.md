@@ -45,6 +45,15 @@ When a task touches Angular app structure, UI patterns, Supabase usage, or datab
 - If uncertain, inspect the nearest working example in the codebase and stay consistent with established patterns.
 - Keep scope narrow; avoid unrelated refactors.
 
+## Authentication and database safety
+
+- The beginner playground uses Supabase anonymous sign-in and username-only player profiles. Usernames are display identifiers, not credentials.
+- Never collect/store passwords in profiles or invent fake email/phone aliases. Supabase Auth owns the persistent browser session.
+- The Supabase publishable key is browser-safe; never expose service-role credentials.
+- Profiles link to `auth.users.id` through `user_id`; RLS scopes access to `auth.uid()` and anonymous sessions.
+- Keep schema changes in reviewed Supabase migrations. Do not apply a migration to a remote project without explicit user approval.
+- Enforce data ownership and future game-critical rules with server/database authorization, not only client-side checks.
+
 ## Relevant files to consult
 
 - `AGENTS.md` — repository-level instructions and constraints.
