@@ -16,13 +16,26 @@ Before using login:
    supplied (`id`, `username`, `display_name`, and `created_at`). The migration adds a Supabase
    Auth user ID, enforces the username format, removes public `anon` access, and limits profile
    reads/inserts to the owning anonymous session.
-3. Link the Supabase CLI to the project and apply the reviewed migration with `supabase db push`.
-   No remote migration has been applied by this project setup.
+3. Review the ordered migrations in `supabase/migrations/`, then link the Supabase CLI to the
+   project and apply them with `supabase db push`. No remote migration has been applied by this
+   project setup.
 
 This is a playground identity, not a recoverable account. Signing out, clearing browser storage,
 or switching devices loses access to that player; usernames do not prove ownership. Do not use
 this for sensitive data or treat a username as a password. The `profiles` table has no password
 column. Supabase Auth owns the browser session and PostgreSQL RLS enforces profile ownership.
+
+## Neighborhood game
+
+The game migration creates each player's home, eight-lot neighborhood, four starter flowers, and
+100-coin wallet idempotently on the first visit. Watering is limited by the database to once per
+flower per calendar day in `Asia/Manila`; harvesting, selling, purchases, inventory changes, and
+neighbor invitations are handled by transactional database functions. The browser can read
+catalog and neighborhood data, but cannot directly change flowers, wallet balances, inventory, or
+lot ownership.
+
+After applying the migrations, run the database rule tests with `supabase test db`. The Angular
+tests can be run with `npm test`.
 
 ## Development server
 

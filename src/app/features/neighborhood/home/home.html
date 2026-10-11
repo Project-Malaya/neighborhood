@@ -4,59 +4,449 @@
       <span aria-hidden="true">🌷</span>
       <span>Kimi and Sia's Neighborhood</span>
     </a>
-    <div class="account">
-      <span class="account-username">&#64;{{ username() }}</span>
-    </div>
+    <p class="account-username">&#64;{{ username() }}</p>
   </header>
 
-  <main class="home-content">
-    <section class="welcome">
+  <nav class="game-nav" aria-label="Neighborhood sections">
+    <a href="#garden">Garden</a>
+    <a href="#shop">Little shop</a>
+    <a href="#inventory">Inventory</a>
+    <a href="#neighborhood">Neighborhood</a>
+    <a href="#invitations">Invitations</a>
+  </nav>
+
+  <main id="main" class="home-content">
+    <section class="welcome" aria-labelledby="welcome-title">
       <span class="sun" aria-hidden="true">☀️</span>
       <p class="eyebrow">A lovely day to be home</p>
-      <h1>Kimi and Sia's<br />Neighborhood</h1>
+      <h1 id="welcome-title">Kimi and Sia's Neighborhood</h1>
       <p>Hello, {{ username() }}! Your own little corner of the neighborhood is waiting.</p>
+      @if (state(); as game) {
+        <p class="coin-balance" aria-label="Coin balance">🪙 {{ game.coins }} coins</p>
+      }
     </section>
 
-    <div class="yard">
-      <article class="place-card house-card">
-        <div class="house-art" aria-hidden="true">
-          <span class="chimney"></span>
-          <span class="roof"></span>
-          <span class="house-body">
-            <span class="window window-left"></span>
-            <span class="door"></span>
-            <span class="window window-right"></span>
-          </span>
-          <span class="house-step"></span>
-        </div>
-        <div class="place-caption">
-          <span class="caption-icon" aria-hidden="true">🏡</span>
-          <div>
-            <h2>My House</h2>
-            <p>A cozy place to call your own</p>
+    @if (errorMessage()) {
+      <p class="notice notice-error" role="alert">{{ errorMessage() }}</p>
+    }
+    @if (statusMessage()) {
+      <p class="notice notice-success" role="status">{{ statusMessage() }}</p>
+    }
+    @if (loading()) {
+      <p class="loading-message" role="status">Getting your little home ready…</p>
+    } @else if (state(); as game) {
+      <section class="yard" aria-label="Your home and garden">
+        <article class="place-card house-card">
+          <div class="house-art">
+            <span role="img" aria-label="A cozy little house">🏡</span>
           </div>
-        </div>
-      </article>
+          <div class="place-caption">
+            <span class="caption-icon" aria-hidden="true">🏡</span>
+            <div>
+              <h2>My House</h2>
+              <p>{{ game.neighborhoodName }} · Lot {{ game.lotPosition }}</p>
+            </div>
+          </div>
+        </article>
 
-      <article class="place-card garden-card">
-        <div class="garden-art" aria-hidden="true">
-          <span class="flower flower-one">🌷</span>
-        </div>
-        <div class="place-caption">
-          <span class="caption-icon" aria-hidden="true">🌼</span>
+        <article class="place-card garden-card" id="garden" aria-labelledby="garden-title">
+          <div class="section-heading">
+            <span aria-hidden="true">🌷</span>
+            <div>
+              <h2 id="garden-title">My Garden</h2>
+              <p>Water each growing flower once a day. Days follow Philippines time.</p>
+            </div>
+          </div>
+          <div class="flower-grid">
+            @for (flower of game.flowers; track flower.id) {
+              <article class="flower-card">
+                <span class="flower-icon" aria-hidden="true">
+                  @switch (flower.imageKey) {
+                    @case ('daisy') {
+                      🌼
+                    }
+                    @case ('tulip') {
+                      🌷
+                    }
+                    @case ('sunflower') {
+                      🌻
+                    }
+                    @default {
+                      🌹
+                    }
+                  }
+                </span>
+                <div class="flower-copy">
+                  <h3>{{ flower.name }}</h3>
+                  <p>{{ growthLabel(flower) }}</p>
+                </div>
+                @if (flower.status === 'growing' && flower.growthStage < 2) {
+                  <button
+                    type="button"
+                    class="secondary-button"
+                    [disabled]="activeAction() !== null || flower.wateredToday"
+                    (click)="waterFlower(flower.id)"
+                  >
+                    @if (activeAction() === 'water-' + flower.id) {
+                      Watering…
+                    } @else if (flower.wateredToday) {
+                      Watered today
+                    } @else {
+                      Water 💧
+                    }
+                  </button>
+                } @else if (flower.status === 'growing' && flower.growthStage === 2) {
+                  <button
+                    type="button"
+                    class="primary-button"
+                    [disabled]="activeAction() !== null"
+                    (click)="harvestFlower(flower.id)"
+                  >
+                    @if (activeAction() === 'harvest-' + flower.id) {
+                      Harvesting…
+                    } @else {
+                      Harvest
+                    }
+                  </button>
+                } @else if (flower.status === 'harvested') {
+                  <button
+                    type="button"
+                    class="primary-button"
+                    [disabled]="activeAction() !== null"
+                    (click)="sellFlower(flower.id)"
+                  >
+                    @if (activeAction() === 'sell-' + flower.id) {
+                      Selling…
+                    } @else {
+                      Sell · {{ flower.sellPrice }} coins
+                    }
+                  </button>
+                }
+              </article>
+            } @empty {
+              <p>Your garden is having a quiet day.</p>
+            }
+          </div>
+        </article>
+      </section>
+
+      <section class="content-section" id="shop" aria-labelledby="shop-title">
+        <div class="section-heading">
+          <span aria-hidden="true">🛒</span>
           <div>
-            <h2>My Garden</h2>
-            <p>A little patch of sunshine</p>
+            <h2 id="shop-title">Little Shop</h2>
+            <p>Pick up something cozy for your home or garden.</p>
           </div>
         </div>
-        <div class="flower-card">
-          <span class="flower-icon" aria-hidden="true">🌷</span>
+        <div class="item-grid">
+          @for (item of game.items; track item.id) {
+            <article class="item-card">
+              <span class="item-icon" aria-hidden="true">
+                @switch (item.imageKey) {
+                  @case ('small-plant') {
+                    🪴
+                  }
+                  @case ('flower-pot') {
+                    🏺
+                  }
+                  @case ('garden-chair') {
+                    🪑
+                  }
+                  @case ('garden-table') {
+                    🪵
+                  }
+                  @case ('mailbox') {
+                    📫
+                  }
+                  @default {
+                    🌿
+                  }
+                }
+              </span>
+              <div class="item-copy">
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.description }}</p>
+                <p class="item-price">{{ item.price }} coins</p>
+              </div>
+              <button
+                type="button"
+                class="secondary-button"
+                [disabled]="activeAction() !== null"
+                (click)="buyItem(item.id)"
+              >
+                @if (activeAction() === 'buy-' + item.id) {
+                  Buying…
+                } @else {
+                  Buy
+                }
+              </button>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section class="content-section" id="inventory" aria-labelledby="inventory-title">
+        <div class="section-heading">
+          <span aria-hidden="true">🎒</span>
           <div>
-            <h3>My Flower</h3>
-            <p>Growing in your garden</p>
+            <h2 id="inventory-title">My Inventory</h2>
+            <p>Your little collection of home and garden things.</p>
           </div>
         </div>
-      </article>
-    </div>
+        @if (game.inventory.length) {
+          <div class="inventory-list">
+            @for (item of game.inventory; track item.itemId) {
+              <div class="inventory-item">
+                <span aria-hidden="true">
+                  @switch (item.imageKey) {
+                    @case ('small-plant') {
+                      🪴
+                    }
+                    @case ('flower-pot') {
+                      🏺
+                    }
+                    @case ('garden-chair') {
+                      🪑
+                    }
+                    @case ('garden-table') {
+                      🪵
+                    }
+                    @case ('mailbox') {
+                      📫
+                    }
+                    @default {
+                      🌿
+                    }
+                  }
+                </span>
+                <span>{{ item.name }}</span>
+                <span class="quantity">× {{ item.quantity }}</span>
+              </div>
+            }
+          </div>
+          <p class="helper-text">
+            Decorating will be here in a future visit. Your items are safe here.
+          </p>
+        } @else {
+          <p class="empty-state">Your inventory is empty. The shop has a few cozy things.</p>
+        }
+      </section>
+
+      <section class="content-section" id="neighborhood" aria-labelledby="neighborhood-title">
+        <div class="section-heading">
+          <span aria-hidden="true">🏘️</span>
+          <div>
+            <h2 id="neighborhood-title">{{ game.neighborhoodName }}</h2>
+            <p>Visit a neighbor or invite a friend to an empty lot.</p>
+          </div>
+        </div>
+        <div class="lot-grid">
+          @for (lot of game.lots; track lot.id) {
+            <article class="lot-card" [class.lot-card-home]="isOwnLot(lot, game)">
+              @if (lot.ownerId === null) {
+                <span class="lot-art" aria-hidden="true">🌱</span>
+                <h3>Empty Lot {{ lot.position }}</h3>
+              } @else {
+                <span class="lot-art" aria-hidden="true">🏡</span>
+                <h3>
+                  @if (lot.ownerUsername === game.username) {
+                    My House
+                  } @else {
+                    &#64;{{ lot.ownerUsername }}
+                  }
+                </h3>
+                @if (lot.ownerId !== null && lot.ownerUsername !== game.username) {
+                  <button
+                    type="button"
+                    class="text-button"
+                    [disabled]="activeAction() !== null"
+                    (click)="visitNeighbor(lot.ownerId)"
+                  >
+                    Visit garden
+                  </button>
+                } @else {
+                  <p class="lot-note">Lot {{ lot.position }} · You live here</p>
+                }
+              }
+            </article>
+          }
+        </div>
+
+        @if (hasEmptyLots() && canInvite()) {
+          <form class="invite-form" [formGroup]="invitationForm" (ngSubmit)="sendInvitation()">
+            <h3>Invite a friend</h3>
+            <div class="invite-fields">
+              <div class="field">
+                <label for="friend-username">Friend's username</label>
+                <input
+                  id="friend-username"
+                  type="text"
+                  formControlName="username"
+                  autocomplete="off"
+                  maxlength="20"
+                  [attr.aria-invalid]="
+                    invitationForm.controls.username.invalid &&
+                    invitationForm.controls.username.touched
+                  "
+                />
+              </div>
+              <div class="field">
+                <label for="invite-lot">Empty lot</label>
+                <select
+                  id="invite-lot"
+                  formControlName="lotId"
+                  [attr.aria-invalid]="
+                    invitationForm.controls.lotId.invalid && invitationForm.controls.lotId.touched
+                  "
+                >
+                  <option value="" disabled>Select a lot</option>
+                  @for (lot of game.lots; track lot.id) {
+                    @if (lot.ownerId === null) {
+                      <option [value]="lot.id">Lot {{ lot.position }}</option>
+                    }
+                  }
+                </select>
+              </div>
+              <button type="submit" class="primary-button" [disabled]="activeAction() !== null">
+                @if (activeAction() === 'invite') {
+                  Sending…
+                } @else {
+                  Send invitation
+                }
+              </button>
+            </div>
+            <p class="helper-text">
+              They'll need their own player profile before you can invite them.
+            </p>
+          </form>
+        }
+
+        @if (selectedNeighbor(); as neighbor) {
+          <section class="neighbor-view" aria-labelledby="neighbor-view-title">
+            <div class="section-heading">
+              <span aria-hidden="true">🏡</span>
+              <div>
+                <h3 id="neighbor-view-title">&#64;{{ neighbor.username }}'s Garden</h3>
+                <p>A little look around. This garden is read-only.</p>
+              </div>
+            </div>
+            <div class="visitor-flowers">
+              @for (flower of neighbor.flowers; track flower.id) {
+                <span [attr.aria-label]="flower.name + ', ' + growthLabel(flower)" role="img">
+                  @switch (flower.imageKey) {
+                    @case ('daisy') {
+                      🌼
+                    }
+                    @case ('tulip') {
+                      🌷
+                    }
+                    @case ('sunflower') {
+                      🌻
+                    }
+                    @default {
+                      🌹
+                    }
+                  }
+                </span>
+              } @empty {
+                <p>The garden is quiet for now.</p>
+              }
+            </div>
+          </section>
+        }
+      </section>
+
+      <section class="content-section" id="invitations" aria-labelledby="invitations-title">
+        <div class="section-heading">
+          <span aria-hidden="true">💌</span>
+          <div>
+            <h2 id="invitations-title">Neighborhood Invitations</h2>
+            <p>Invitations wait for up to 14 days.</p>
+          </div>
+        </div>
+        @if (game.invitations.length) {
+          <div class="invitation-list">
+            @for (invitation of game.invitations; track invitation.id) {
+              <article class="invitation-card">
+                <div>
+                  <h3>
+                    @if (invitation.direction === 'incoming') {
+                      @if (invitation.status === 'pending') {
+                        &#64;{{ invitation.username }} invited you to Lot
+                        {{ invitation.lotPosition }}
+                      } @else {
+                        Invitation from &#64;{{ invitation.username }}
+                      }
+                    } @else {
+                      Invitation to &#64;{{ invitation.username }} · Lot
+                      {{ invitation.lotPosition }}
+                    }
+                  </h3>
+                  <p class="invitation-status">{{ invitation.status | titlecase }}</p>
+                </div>
+                @if (invitation.direction === 'incoming' && invitation.status === 'pending') {
+                  <div class="button-row">
+                    <button
+                      type="button"
+                      class="primary-button"
+                      [disabled]="activeAction() !== null"
+                      (click)="respondToInvitation(invitation.id, 'accept')"
+                    >
+                      @if (activeAction() === 'accept-' + invitation.id) {
+                        Joining…
+                      } @else {
+                        Accept
+                      }
+                    </button>
+                    <button
+                      type="button"
+                      class="secondary-button"
+                      [disabled]="activeAction() !== null"
+                      (click)="respondToInvitation(invitation.id, 'decline')"
+                    >
+                      Decline
+                    </button>
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="empty-state">No invitations yet. Good neighbors always say hello.</p>
+        }
+      </section>
+
+      <section class="content-section history-section" aria-labelledby="history-title">
+        <div class="section-heading">
+          <span aria-hidden="true">🪙</span>
+          <div>
+            <h2 id="history-title">Coin History</h2>
+            <p>Your recent earnings and little shop visits.</p>
+          </div>
+        </div>
+        @if (game.recentTransactions.length) {
+          <ul class="history-list">
+            @for (
+              transaction of game.recentTransactions;
+              track transaction.createdAt + transaction.type
+            ) {
+              <li>
+                <span>{{ transaction.type | titlecase }}</span>
+                <strong [class.earned]="transaction.amount > 0">
+                  {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount }} coins
+                </strong>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="empty-state">Your coin story will appear here.</p>
+        }
+      </section>
+    } @else {
+      <section class="load-error" aria-labelledby="load-error-title">
+        <h2 id="load-error-title">Your home is taking a little longer.</h2>
+        <p>Please check that the neighborhood database migration has been applied and try again.</p>
+      </section>
+    }
   </main>
 </div>

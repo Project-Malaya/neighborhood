@@ -14,6 +14,36 @@ export const routes: Routes = [
     loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
     title: "Neighborhood | Kimi and Sia's Neighborhood",
   },
+  {
+    path: 'garden',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
+    title: "My Garden | Kimi and Sia's Neighborhood",
+  },
+  {
+    path: 'shop',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
+    title: "Little Shop | Kimi and Sia's Neighborhood",
+  },
+  {
+    path: 'inventory',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
+    title: "My Inventory | Kimi and Sia's Neighborhood",
+  },
+  {
+    path: 'neighborhood',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
+    title: "Neighborhood | Kimi and Sia's Neighborhood",
+  },
+  {
+    path: 'invitations',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
+    title: "Invitations | Kimi and Sia's Neighborhood",
+  },
   { path: '', pathMatch: 'full', redirectTo: '/login' },
   { path: '**', redirectTo: '/login' },
 ];
