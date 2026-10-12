@@ -34,6 +34,15 @@ export interface NeighborhoodLot {
   position: number;
   ownerId: number | null;
   ownerUsername: string | null;
+  flowers: NeighborFlower[];
+}
+
+export interface NeighborFlower {
+  id: string;
+  name: string;
+  imageKey: string;
+  growthStage: number;
+  status: FlowerStatus;
 }
 
 export interface NeighborInvitation {
@@ -66,7 +75,12 @@ export interface GameState {
 
 export interface NeighborVisit {
   username: string;
-  flowers: Omit<GameFlower, 'wateredToday' | 'sellPrice'>[];
+  flowers: NeighborFlower[];
+}
+
+export interface NeighborhoodView {
+  name: string;
+  lots: NeighborhoodLot[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -161,6 +175,10 @@ function parseGameState(value: unknown): GameState {
       position: requiredNumber(lot['position'], 'lot position'),
       ownerId,
       ownerUsername,
+      flowers:
+        lot['flowers'] === undefined
+          ? []
+          : recordArray(lot['flowers'], 'lot flowers').map(parseNeighborFlower),
     };
   });
 
@@ -212,19 +230,19 @@ function parseNeighborVisit(value: unknown): NeighborVisit {
     throw new Error('The neighbor garden could not be loaded.');
   }
 
-  const flowers = recordArray(value['flowers'], 'neighbor flowers').map((flower) => {
-    return {
-      id: requiredString(flower['id'], 'flower id'),
-      name: requiredString(flower['name'], 'flower name'),
-      imageKey: requiredString(flower['imageKey'], 'flower image'),
-      growthStage: requiredNumber(flower['growthStage'], 'flower growth stage'),
-      status: flowerStatus(flower['status']),
-    };
-  });
-
   return {
     username: requiredString(value['username'], 'neighbor username'),
-    flowers,
+    flowers: recordArray(value['flowers'], 'neighbor flowers').map(parseNeighborFlower),
+  };
+}
+
+function parseNeighborFlower(flower: Record<string, unknown>): NeighborFlower {
+  return {
+    id: requiredString(flower['id'], 'flower id'),
+    name: requiredString(flower['name'], 'flower name'),
+    imageKey: requiredString(flower['imageKey'], 'flower image'),
+    growthStage: requiredNumber(flower['growthStage'], 'flower growth stage'),
+    status: flowerStatus(flower['status']),
   };
 }
 
@@ -278,6 +296,37 @@ export class NeighborhoodGameService {
 
   async visitNeighbor(ownerId: number): Promise<NeighborVisit> {
     return parseNeighborVisit(await this.callRpc('visit_neighbor', { p_owner_id: ownerId }));
+  }
+
+  async loadNeighborhood(): Promise<NeighborhoodView> {
+    const value = await this.callRpc('get_neighborhood_houses');
+    if (!isRecord(value)) {
+      throw new Error('The neighborhood returned invalid house data.');
+    }
+
+    const lots = recordArray(value['lots'], 'neighborhood lots').map((lot) => {
+      const ownerId = lot['ownerId'];
+      const ownerUsername = lot['ownerUsername'];
+      if (ownerId !== null && typeof ownerId !== 'number') {
+        throw new Error('Game data contains an invalid lot owner.');
+      }
+      if (ownerUsername !== null && typeof ownerUsername !== 'string') {
+        throw new Error('Game data contains an invalid lot username.');
+      }
+
+      return {
+        id: requiredString(lot['id'], 'lot id'),
+        position: requiredNumber(lot['position'], 'lot position'),
+        ownerId,
+        ownerUsername,
+        flowers: recordArray(lot['flowers'], 'lot flowers').map(parseNeighborFlower),
+      };
+    });
+
+    return {
+      name: requiredString(value['neighborhoodName'], 'neighborhood name'),
+      lots,
+    };
   }
 
   private async callRpc(

@@ -1,0 +1,606 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.neighborhood-page {
+  min-height: 100vh;
+  background: linear-gradient(#e8f3ed 0, #f7f4e8 70%);
+  color: #293c31;
+}
+
+.top-bar,
+.game-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem clamp(1rem, 5vw, 4rem);
+  border-bottom: 1px solid rgb(55 84 60 / 12%);
+  background: rgb(255 254 250 / 94%);
+}
+
+.top-bar {
+  min-height: 4.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #293c31;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand span:first-child {
+  font-size: 1.35rem;
+}
+
+.account-username {
+  margin: 0;
+  color: #465749;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.game-nav {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-block: 0.55rem;
+  background: rgb(255 254 250 / 96%);
+}
+
+.game-nav a {
+  color: #31583d;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+}
+
+.game-nav a:hover,
+.game-nav a[aria-current='page'] {
+  text-decoration: underline;
+}
+
+.neighborhood-content {
+  width: min(100% - 2rem, 76rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 3.5rem) 0 4rem;
+}
+
+.intro {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.sun {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 2.3rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.4rem;
+  color: #536e50;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: #293c31;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.intro h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.intro > p:last-child {
+  margin: 0.75rem 0 0;
+  color: #58645a;
+  line-height: 1.55;
+}
+
+.neighborhood-scene {
+  overflow: hidden;
+  border: 1px solid #dce3d5;
+  border-radius: 1.6rem;
+  background: #cce5e5;
+  box-shadow: 0 1rem 2.5rem rgb(68 75 45 / 8%);
+}
+
+.sky {
+  position: relative;
+  display: flex;
+  height: 8rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(#bfe1e6, #e3f0dd);
+}
+
+.scene-sun {
+  position: absolute;
+  top: 1.1rem;
+  right: 12%;
+  font-size: 2.5rem;
+}
+
+.street {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+  padding: 1.25rem clamp(0.65rem, 3vw, 2rem) 1.5rem;
+  background:
+    radial-gradient(ellipse at 18% 25%, #b2d29c 0 5rem, transparent 5.1rem),
+    radial-gradient(ellipse at 88% 70%, #b2d29c 0 6rem, transparent 6.1rem),
+    linear-gradient(#9ec58c, #b1ce95);
+}
+
+.lot {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 17rem;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgb(66 97 61 / 18%);
+  border-radius: 1.2rem;
+  background: rgb(255 254 250 / 72%);
+}
+
+.occupied-lot {
+  padding: 0.75rem 0.6rem 0.65rem;
+  color: #293c31;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.occupied-lot:hover {
+  transform: translateY(-0.2rem);
+  background: #fffefa;
+  box-shadow: 0 0.65rem 1.2rem rgb(42 71 48 / 14%);
+}
+
+.occupied-lot:focus-visible,
+.close-button:focus-visible,
+.game-nav a:focus-visible,
+.brand:focus-visible,
+.drawer-backdrop:focus-visible {
+  outline: 3px solid #94602c;
+  outline-offset: 3px;
+}
+
+.my-lot {
+  border-color: #557e56;
+  background: rgb(255 254 250 / 90%);
+}
+
+.lot-number {
+  align-self: flex-start;
+  color: #58645a;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.house {
+  position: relative;
+  display: grid;
+  width: 7.4rem;
+  height: 7.1rem;
+  flex: 0 0 auto;
+  justify-items: center;
+  margin-top: 0.5rem;
+  padding-top: 2.3rem;
+}
+
+.house-roof {
+  position: absolute;
+  top: 0.65rem;
+  width: 5.7rem;
+  height: 4.1rem;
+  transform: rotate(45deg);
+  border-radius: 0.45rem 0.3rem 0.1rem;
+  background: #bb6b57;
+  box-shadow: inset 0.3rem 0.3rem rgb(255 255 255 / 12%);
+}
+
+.house-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 5.6rem;
+  height: 4.1rem;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 0 0.35rem;
+  border: 0.2rem solid #fff8e9;
+  border-bottom: 0;
+  background: #f6d99a;
+}
+
+.house-window {
+  width: 1.05rem;
+  height: 1.15rem;
+  margin-bottom: 1.1rem;
+  border: 0.16rem solid #fff8e9;
+  border-radius: 0.25rem;
+  background: #9dcbd1;
+}
+
+.house-door {
+  width: 1.2rem;
+  height: 2.35rem;
+  border-radius: 0.4rem 0.4rem 0 0;
+  background: #81644c;
+}
+
+.frontyard {
+  display: flex;
+  min-height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 0.15rem;
+  margin: 0.2rem 0 0.35rem;
+  padding: 0.15rem 0.35rem;
+  border-bottom: 0.25rem solid #71945e;
+}
+
+.yard-flower {
+  font-size: clamp(1.05rem, 2.5vw, 1.55rem);
+  line-height: 1.3;
+}
+
+.yard-empty {
+  color: #58645a;
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.house-caption {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: auto;
+}
+
+.house-owner {
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.flower-count {
+  color: #58645a;
+  font-size: 0.75rem;
+}
+
+.empty-lot {
+  justify-content: flex-start;
+  padding: 0.75rem 0.6rem;
+  border-style: dashed;
+  background: rgb(236 242 218 / 60%);
+}
+
+.empty-lot-art {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  font-size: 3rem;
+}
+
+.empty-lot-label {
+  min-height: 2.2rem;
+  color: #58645a;
+  font-size: 0.8rem;
+}
+
+.road {
+  display: grid;
+  min-height: 3.5rem;
+  place-items: center;
+  border-top: 0.4rem solid #7caa71;
+  background: #a69e87;
+  color: #f8f0d9;
+  font-size: 1.2rem;
+  letter-spacing: 0.2rem;
+}
+
+.scene-hint {
+  margin: 0.9rem 0 0;
+  color: #58645a;
+  font-size: 0.87rem;
+  text-align: center;
+}
+
+.notice,
+.loading-message {
+  padding: 0.9rem 1rem;
+  border-radius: 0.8rem;
+  line-height: 1.5;
+}
+
+.notice-error {
+  border: 1px solid #e5c3bd;
+  background: #fff0ee;
+  color: #842b27;
+}
+
+.loading-message {
+  color: #465749;
+  text-align: center;
+}
+
+.drawer-layer {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(26 38 29 / 48%);
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.house-drawer {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 27rem);
+  height: 100%;
+  overflow-y: auto;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  background: #fffefa;
+  box-shadow: -1rem 0 3rem rgb(0 0 0 / 12%);
+}
+
+.house-drawer:focus {
+  outline: none;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.drawer-header h2 {
+  margin: 0;
+  font-size: 1.65rem;
+  overflow-wrap: anywhere;
+}
+
+.close-button {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #a9b2a5;
+  border-radius: 999px;
+  background: #f4f7ed;
+  color: #294a33;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.close-button span:first-child {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.drawer-house-art {
+  display: grid;
+  min-height: 12rem;
+  place-items: center;
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(#d8edf0 0 58%, #a6c98d 58%);
+}
+
+.drawer-house-art > span {
+  font-size: 4.25rem;
+}
+
+.drawer-yard {
+  display: flex;
+  min-height: 2rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  background: rgb(255 254 250 / 65%);
+  font-size: 1.4rem;
+}
+
+.drawer-empty {
+  color: #58645a;
+  font-size: 0.8rem;
+}
+
+.house-details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0 1.4rem;
+}
+
+.house-details div {
+  padding: 0.7rem;
+  border: 1px solid #e1e5d8;
+  border-radius: 0.7rem;
+  background: #f7f8ef;
+}
+
+.house-details dt {
+  color: #58645a;
+  font-size: 0.75rem;
+}
+
+.house-details dd {
+  margin: 0.25rem 0 0;
+  color: #293c31;
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.section-heading > span {
+  font-size: 1.7rem;
+}
+
+.section-heading h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.section-heading p {
+  margin: 0.2rem 0 0;
+  color: #58645a;
+  font-size: 0.83rem;
+  line-height: 1.4;
+}
+
+.flower-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.flower-detail {
+  display: flex;
+  min-height: 4rem;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e1e5d8;
+  border-radius: 0.8rem;
+  background: #fffefa;
+}
+
+.flower-emoji {
+  font-size: 1.8rem;
+}
+
+.flower-detail h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.flower-detail p {
+  margin: 0.2rem 0 0;
+  color: #58645a;
+  font-size: 0.83rem;
+}
+
+.empty-message,
+.read-only-note {
+  color: #58645a;
+  font-size: 0.87rem;
+  line-height: 1.5;
+}
+
+.empty-message {
+  margin: 0;
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  background: #f7f8ef;
+}
+
+.read-only-note {
+  margin: 1.2rem 0 0;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .street {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .top-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .game-nav {
+    justify-content: flex-start;
+    gap: 0.5rem 1rem;
+  }
+
+  .game-nav a {
+    font-size: 0.82rem;
+  }
+
+  .lot {
+    min-height: 15rem;
+  }
+
+  .house {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+
+  .frontyard {
+    margin-top: -0.45rem;
+  }
+
+  .house-drawer {
+    width: 100%;
+    padding: 1rem;
+  }
+}

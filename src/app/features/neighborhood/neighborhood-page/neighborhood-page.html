@@ -1,0 +1,200 @@
+<main class="neighborhood-page">
+  <header class="top-bar">
+    <a class="brand" routerLink="/home" aria-label="Return to your home">
+      <span aria-hidden="true">🌷</span>
+      <span>Kimi and Sia's Neighborhood</span>
+    </a>
+    <p class="account-username">&#64;{{ username() }}</p>
+  </header>
+
+  <nav class="game-nav" aria-label="Neighborhood sections">
+    <a routerLink="/home" fragment="garden">Garden</a>
+    <a routerLink="/home" fragment="shop">Little shop</a>
+    <a routerLink="/home" fragment="inventory">Inventory</a>
+    <a routerLink="/neighborhood" aria-current="page">Neighborhood</a>
+    <a routerLink="/home" fragment="invitations">Invitations</a>
+  </nav>
+
+  <section class="neighborhood-content" aria-labelledby="page-title">
+    <div class="intro">
+      <span class="sun" aria-hidden="true">☀️</span>
+      <p class="eyebrow">A little place for friends</p>
+      <h1 id="page-title">{{ neighborhood()?.name ?? "Kimi and Sia's Neighborhood" }}</h1>
+      <p>Every home has its own garden. Choose a house to say hello and peek at its flowers.</p>
+    </div>
+
+    @if (errorMessage()) {
+      <p class="notice notice-error" role="alert">{{ errorMessage() }}</p>
+    } @else if (loading()) {
+      <p class="loading-message" role="status">Opening the neighborhood…</p>
+    } @else if (neighborhood(); as place) {
+      <div class="neighborhood-scene" aria-label="Neighborhood homes and front gardens">
+        <div class="sky" aria-hidden="true">
+          <span class="scene-sun">☀️</span>
+        </div>
+        <div class="street">
+          @for (lot of place.lots; track lot.id) {
+            @if (lot.ownerId !== null) {
+              <button
+                type="button"
+                class="lot occupied-lot"
+                [class.my-lot]="lot.ownerUsername === username()"
+                [attr.aria-label]="
+                  'Open ' +
+                  (lot.ownerUsername === username()
+                    ? 'your house'
+                    : lot.ownerUsername + '\'s house') +
+                  ', lot ' +
+                  lot.position +
+                  ', ' +
+                  lot.flowers.length +
+                  ' flowers'
+                "
+                aria-haspopup="dialog"
+                (click)="openDetails(lot, $event)"
+              >
+                <span class="lot-number">Lot {{ lot.position }}</span>
+                <span class="house" aria-hidden="true">
+                  <span class="house-roof"></span>
+                  <span class="house-body">
+                    <span class="house-window house-window-left"></span>
+                    <span class="house-door"></span>
+                    <span class="house-window house-window-right"></span>
+                  </span>
+                </span>
+                <span class="frontyard" aria-hidden="true">
+                  @for (flower of lot.flowers; track flower.id) {
+                    <span class="yard-flower">{{ flowerEmoji(flower.imageKey) }}</span>
+                  } @empty {
+                    <span class="yard-empty">A quiet little garden</span>
+                  }
+                </span>
+                <span class="house-caption">
+                  <span class="house-owner">
+                    @if (lot.ownerUsername === username()) {
+                      My House
+                    } @else {
+                      &#64;{{ lot.ownerUsername }}
+                    }
+                  </span>
+                  <span class="flower-count">{{ lot.flowers.length }} flowers</span>
+                </span>
+              </button>
+            } @else {
+              <div class="lot empty-lot" aria-label="Empty lot {{ lot.position }}">
+                <span class="lot-number">Lot {{ lot.position }}</span>
+                <span class="empty-lot-art" aria-hidden="true">🌱</span>
+                <span class="empty-lot-label">A new home someday</span>
+              </div>
+            }
+          }
+        </div>
+        <div class="road" aria-hidden="true">
+          <span>· · · · · · · · · · · · · · · · · · · ·</span>
+        </div>
+      </div>
+      <p class="scene-hint">Tap any house to see who lives there and what’s blooming.</p>
+    }
+  </section>
+
+  @if (selectedLot(); as lot) {
+    <div class="drawer-layer">
+      <button
+        type="button"
+        class="drawer-backdrop"
+        aria-label="Close house details"
+        (click)="closeDetails()"
+      ></button>
+      <aside
+        #drawer
+        class="house-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+        tabindex="-1"
+        (keydown.tab)="trapTab($event)"
+      >
+        <div class="drawer-header">
+          <div>
+            <p class="eyebrow">A little peek inside</p>
+            <h2 id="drawer-title">
+              @if (lot.ownerUsername === username()) {
+                My House
+              } @else {
+                &#64;{{ lot.ownerUsername }}'s House
+              }
+            </h2>
+          </div>
+          <button
+            type="button"
+            class="close-button"
+            aria-label="Close house details"
+            #closeButton
+            (click)="closeDetails()"
+          >
+            <span aria-hidden="true">×</span>
+            <span>Close</span>
+          </button>
+        </div>
+
+        <div class="drawer-house-art" aria-hidden="true">
+          <span>🏡</span>
+          <div class="drawer-yard">
+            @for (flower of lot.flowers; track flower.id) {
+              <span>{{ flowerEmoji(flower.imageKey) }}</span>
+            } @empty {
+              <span class="drawer-empty">A garden waiting to bloom</span>
+            }
+          </div>
+        </div>
+
+        <dl class="house-details">
+          <div>
+            <dt>Neighbor</dt>
+            <dd>
+              @if (lot.ownerUsername === username()) {
+                You
+              } @else {
+                &#64;{{ lot.ownerUsername }}
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Lot</dt>
+            <dd>{{ lot.position }}</dd>
+          </div>
+          <div>
+            <dt>Garden</dt>
+            <dd>{{ lot.flowers.length }} flowers</dd>
+          </div>
+        </dl>
+
+        <section class="drawer-flowers" aria-labelledby="flowers-title">
+          <div class="section-heading">
+            <span aria-hidden="true">🌷</span>
+            <div>
+              <h3 id="flowers-title">Frontyard flowers</h3>
+              <p>A peek at what’s growing outside.</p>
+            </div>
+          </div>
+          <div class="flower-list">
+            @for (flower of lot.flowers; track flower.id) {
+              <article class="flower-detail">
+                <span class="flower-emoji" aria-hidden="true">
+                  {{ flowerEmoji(flower.imageKey) }}
+                </span>
+                <div>
+                  <h4>{{ flower.name }}</h4>
+                  <p>{{ growthLabel(flower.status, flower.growthStage) }}</p>
+                </div>
+              </article>
+            } @empty {
+              <p class="empty-message">There aren’t any flowers in this garden just yet.</p>
+            }
+          </div>
+        </section>
+        <p class="read-only-note">Neighbor gardens are just for looking. 🌿</p>
+      </aside>
+    </div>
+  }
+</main>

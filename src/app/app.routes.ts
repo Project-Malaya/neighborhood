@@ -35,7 +35,10 @@ export const routes: Routes = [
   {
     path: 'neighborhood',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/neighborhood/home/home').then((module) => module.Home),
+    loadComponent: () =>
+      import('./features/neighborhood/neighborhood-page/neighborhood-page').then(
+        (module) => module.NeighborhoodPage,
+      ),
     title: "Neighborhood | Kimi and Sia's Neighborhood",
   },
   {
